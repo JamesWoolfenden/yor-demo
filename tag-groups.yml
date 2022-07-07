@@ -22,6 +22,8 @@ tag_groups:
             - solution_architecture:
                 tags:
                   git_modifiers:
+                    - james.woolfenden
+                    - James.Woolfenden
                     - jameswoolfenden
             - application:
                 tags:
