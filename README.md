@@ -29,7 +29,7 @@ go build
 
 ## Basic usage
 
-In the supplied repo you will see the folder Terraform. It contains my so oh so basic terraform:
+In the supplied repo you will see the folder Terraform. It contains, my so oh so basic Terraform:
 
 ```hcl
 resource "aws_instance" "honeypot" {
@@ -202,7 +202,7 @@ You can also define you own custom tagging structure:
 
 ## Locking it all in
 
-So far all we have done is execute yor at the Cli, how can I Aautomate these tags to ensure that they get associated at runtime?
+So far all we have done is execute yor at the Cli, how can I automate these tags to ensure that they get associated at runtime?
 
 ### Pre-commit hook
 
@@ -226,7 +226,7 @@ Then when you try to commit your code it will ensure that you have applied Yor t
 
 ### Github action
 
-Of course, to be really sure you can add it to your final gate your CICD tool as well:
+Of course, to be really sure you can add it to your final gate your CI/CD tool as well:
 
 ```yml
 name: IaC trace
@@ -256,9 +256,9 @@ jobs:
 
 Further reading:
 
-<https://bridgecrew.io/blog/yor-checkov-governance-cicd/>
-<https://bridgecrew.io/blog/using-yor-for-ownership-mapping-using-yaml-tag-groups/>
-<https://bridgecrew.awsworkshop.io/terraform/40_module_two/2002_yor_github_action.html>
+ - Overview <https://bridgecrew.io/blog/yor-checkov-governance-cicd/>
+ - Tag groups <https://bridgecrew.io/blog/using-yor-for-ownership-mapping-using-yaml-tag-groups/>
+ - Workshop <https://bridgecrew.awsworkshop.io/terraform/40_module_two/2002_yor_github_action.html>
 
 ## In the Bridgecrew platform
 
@@ -276,8 +276,19 @@ With Rules enables and yor_trace tags defined a relationship between the checked
 
 Platform docs:<https://docs.bridgecrew.io/docs/drift-detection>
 
-### api tag rules
+### API tag rules
 
 A public API is available for the management of tag rules: <https://docs.bridgecrew.io/reference/gettags>
 
 Alternatively you can manage these via Our/my Terraform Provider <https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest/docs/resources/tag>
+
+
+## Recommended Usage
+
+- Run Yor in Pre-commit
+- Back that up with GithubActions or your choice of ci tool
+- Define your tag groups early
+- Enable Yor In the Bridgecrew Platform for your repository, prefferably to all your repositories at once (can raise a lot of PRS)
+- Monitor for those Drift detections violations
+
+
