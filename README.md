@@ -33,7 +33,7 @@ In the supplied repo you will see the folder Terraform. It contains my so oh so 
 
 ```hcl
 resource "aws_instance" "honeypot" {
-    
+
 }
 ```
 
@@ -130,7 +130,7 @@ resource "aws_s3_bucket" "name" {
 }
 ```
 
-## Custom 
+## Custom
 
 You can define you own custom tagging structure:
 <https://github.com/bridgecrewio/yor/blob/main/CUSTOMIZE.md>
