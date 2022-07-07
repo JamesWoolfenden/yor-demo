@@ -1,0 +1,29 @@
+tag_groups:
+  - name: ownership # map infrastructure to owner or owning team
+    tags:
+      - name: env
+        value:
+          default: ${env:GITHUB_HEAD_REF} # environment name would be the name of the feature_branch
+      - name: team_ownership
+        value:
+          default: sre # SRE are the default owning team of cloud resources
+          matches:
+            - security_engineering:
+                tags:
+                  git_modifiers: # security engineering team member's GitHub handles
+                    - rotemavni
+                    - tronxd
+                    - nimrodkor
+            - platform_engineering:
+                tags:
+                  git_modifiers: # platform engineering team member's GitHub handles
+                    - milkana
+                    - nofar
+            - solution_architecture:
+                tags:
+                  git_modifiers:
+                    - jameswoolfenden
+            - application:
+                tags:
+                  git_modifiers:
+                    - schosterbarak
