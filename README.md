@@ -1,14 +1,38 @@
-# yor demo
+# Yor Demo
 
 What is Yor:
 yor: <https://memory-alpha.fandom.com/wiki/Yor>
 
 > Yor is an open-source tool that helps add informative and consistent tags across infrastructure as code (IaC) frameworks. Today, Yor can automatically add tags to Terraform, CloudFormation, and Serverless Frameworks.
 
+## Table of Contents
+
+<!--toc:start-->
+- [Yor Demo](#yor-demo)
+  - [Table of Contents](#table-of-contents)
+  - [Install](#install)
+  - [Usage](#usage)
+    - [Modules](#modules)
+      - [Local](#local)
+      - [Remote](#remote)
+    - [Simple tag group](#simple-tag-group)
+    - [Grouping](#grouping)
+    - [Custom tag groups](#custom-tag-groups)
+  - [Deployment](#deployment)
+    - [Pre-commit](#pre-commit)
+    - [Github action](#github-action)
+  - [Further reading](#further-reading)
+  - [Bridgecrew](#bridgecrew)
+    - [Tag rules](#tag-rules)
+    - [Drift detection](#drift-detection)
+    - [API tag rules](#api-tag-rules)
+  - [Recommendations](#recommendations)
+<!--toc:end-->
+
+## Install
+
 Github:
 <https://github.com/bridgecrewio/yor>
-
-Install:
 
 ```shell
 brew tap bridgecrewio/tap
@@ -19,15 +43,25 @@ brew install bridgecrewio/tap/yor
 choco install yor
 ```
 
+```shell
+scoop bucket add iac https://github.com/JamesWoolfenden/scoop.git
+```
+
+then you can install a tool:
+
+```pwsh
+scoop install yor
+```
+
 Or you can build your own:
 
 ```shell
 git clone https://github.com/bridgecrewio/yor
 cd yor
-go build
+go install
 ```
 
-## Basic usage
+## Usage
 
 In the supplied repo you will see the folder Terraform. It contains, my so oh so basic Terraform:
 
@@ -100,6 +134,52 @@ resource "aws_s3_bucket" "name" {
     yor_trace            = "78b1b7c4-03f9-4ec1-9ed6-1d0d8e7d9b94"
   }
 }
+```
+
+### Modules
+
+#### Local
+
+Open ./env/dev and you can see a module that uses a local module:
+
+```golang
+module "dev" {
+  source = "../../module"
+  tags = {
+    pike      = "permissions"
+  }
+}
+```
+
+To tag these resource:
+
+```bash
+cd ./env/dev
+yor tag -d . --tag-local-modules
+```
+
+#### Remote
+
+Open ./end/dev-remote and you can see a module that uses a remote module:
+
+```golang
+module "codepipeline" {
+  source  = "JamesWoolfenden/codepipeline/aws"
+  version = "0.4.1"
+  common_tags = {
+    pike      = "permissions"
+  }
+  artifact_store = local.artifact_store
+  description    = var.description
+  name           = var.name
+  stages         = var.stages
+}
+```
+
+To tag theses resources (not how the module contains an attribute to pass the tags - "common_tags"):
+
+```bash
+yor tag -d .
 ```
 
 ### Simple tag group
@@ -195,16 +275,16 @@ resource "aws_instance" "honeypot" {
 }
 ```
 
-### Custom
+### Custom tag groups
 
 You can also define you own custom tagging structure:
 <https://github.com/bridgecrewio/yor/blob/main/CUSTOMIZE.md>
 
-## Locking it all in
-
 So far all we have done is execute yor at the Cli, how can I automate these tags to ensure that they get associated at runtime?
 
-### Pre-commit hook
+## Deployment
+
+### Pre-commit
 
 If you configure your repositories to use the Yor Pre-commit hook you can lock these values into codebase and hopefully to any deployment
 If you've previously installed pre-commit from pip all you need to do is add or update your .pre-commit-config.yaml:
@@ -254,13 +334,13 @@ jobs:
         uses: bridgecrewio/yor-action@main
 ```
 
-Further reading:
+## Further reading
 
  - Overview <https://bridgecrew.io/blog/yor-checkov-governance-cicd/>
  - Tag groups <https://bridgecrew.io/blog/using-yor-for-ownership-mapping-using-yaml-tag-groups/>
  - Workshop <https://bridgecrew.awsworkshop.io/terraform/40_module_two/2002_yor_github_action.html>
 
-## In the Bridgecrew platform
+## Bridgecrew
 
 ### Tag rules
 
@@ -269,7 +349,7 @@ If you enable a rule against a repo and it is not compliant, a PR will be raised
 The tags tag rules can be simple or complex:
 <https://docs.bridgecrew.io/docs/manage-tag-rules>
 
-### drift detection as violation
+### Drift detection 
 
 With Rules enables and yor_trace tags defined a relationship between the checked in code and the the deployed runtime version can exist. Any deviations or `drift` is then raised as a violation:
 <https://www.bridgecrew.cloud/incidents?sort=severity&search=&categories=Drift&status=OPEN>
@@ -282,13 +362,13 @@ A public API is available for the management of tag rules: <https://docs.bridgec
 
 Alternatively you can manage these via Our/my Terraform Provider <https://registry.terraform.io/providers/PaloAltoNetworks/bridgecrew/latest/docs/resources/tag>
 
+## Recommendations
 
-## Recommended Usage
-
+- Yor usage depends on deployment scenarios
 - Run Yor in Pre-commit
-- Back that up with GithubActions or your choice of ci tool
+- Back-up with Github Actions or your choice of CI tool - this
+  matches up directly.
+- Commit changes back to repository for traceability
 - Define your tag groups early
-- Enable Yor In the Bridgecrew Platform for your repository, prefferably to all your repositories at once (can raise a lot of PRS)
+- Enable Yor In the Bridgecrew Platform for your repository, preferably to all your repositories at once (can raise a lot of PRS)
 - Monitor for those Drift detections violations
-
-

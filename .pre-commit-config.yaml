@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/bridgecrewio/yor
-    rev: 0.1.148
+    rev: 0.1.170
     hooks:
       - id: yor
         name: yor
@@ -10,7 +10,7 @@ repos:
         types: [terraform]
         pass_filenames: false
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
